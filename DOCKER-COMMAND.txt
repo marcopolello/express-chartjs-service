@@ -1,0 +1,35 @@
+docker build -t express-chartjs-service .
+
+docker run -p 8080:8080 express-chartjs-service
+
+docker run -p 8080:8080 --name express-chartjs-service express-chartjs-service
+
+docker rename my-exprTESTess-chartjs express-chartjs-service
+
+
+You can also use docker network connect command to connect a running container to a network.
+
+docker network connect cfe-network express-chartjs-service
+docker network connect cfe-network cfe-service-app-1
+
+
+docker inspect cfe-service-app-1 | grep IPAddress
+            "SecondaryIPAddresses": null,
+            "IPAddress": "",
+                    "IPAddress": "172.19.0.3",
+                    "IPAddress": "172.18.0.2",
+
+
+docker inspect express-chartjs-service | grep IPAddress
+            "SecondaryIPAddresses": null,
+            "IPAddress": "172.17.0.3",
+                    "IPAddress": "172.17.0.3",
+                    "IPAddress": "172.19.0.2",
+
+
+docker logs express-chartjs-service
+
+
+
+docker network ls
+docker network inspect cfe-network
