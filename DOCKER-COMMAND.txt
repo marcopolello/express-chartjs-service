@@ -1,3 +1,6 @@
+docker logs my-app
+
+
 docker build -t express-chartjs-service .
 
 docker run -p 8080:8080 --name express-chartjs-service express-chartjs-service
