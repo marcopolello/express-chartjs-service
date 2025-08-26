@@ -1,65 +1,62 @@
-const express = require('express');
+import express from 'express';
+import {CategoryScale, Chart, LinearScale, LineController, LineElement, PointElement} from 'chart.js';
+import {Canvas} from 'skia-canvas';
+import fsp from 'node:fs/promises';
+
+Chart.register([
+  CategoryScale,
+  LineController,
+  LineElement,
+  LinearScale,
+  PointElement
+]);
+
 const app = express();
 const port = process.env.PORT || 8080;
-const chartjs = require('chartjs-node');
-const chartjsCanvas = require('chartjs-node-canvas');
-const base64 = require('base64-js');
 
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.send('Server in ascolto sulla porta 8080');
-});
-
-app.get('/ciao', (req, res) => {
-  res.send('Hello World!');
-});
-
-app.get('/api/crea-grafico', (req, res) => {
-  const dati = req.body;
-  const tipoGrafico = dati.tipoGrafico;
-  const datiGrafico = dati.datiGrafico;
-
-  const chart = new chartjs.Chart({
-    type: tipoGrafico,
-    data: datiGrafico,
-    options: {}
-  });
-
-  const canvas = chartjsCanvas.createCanvas(800, 600);
-  chart.render(canvas);
-
-  const imageBuffer = canvas.toBuffer();
-  const imageBase64 = base64.fromByteArray(imageBuffer);
-
-  res.send(imageBase64);
-});
-
 app.get('/api', (req, res) => {
-
-  const width = 400; //px
-  const height = 400; //px
-  const backgroundColour = 'white'; 
-
-  //const chartJSNodeCanvas = new ChartJSNodeCanvas({ width, height, backgroundColour});
-  // (async () => {
-  //     const configuration = {
-  //         type: 'bar',
-  //         data: data,
-  //         options: {}
-  //     };
-  //     const image = await chartJSNodeCanvas.renderToBuffer(configuration);
-  //     const dataUrl = await chartJSNodeCanvas.renderToDataURL(configuration);
-  //     const stream = chartJSNodeCanvas.renderToStream(configuration);
-  // })();
-
-  // const imageData = chart.toBuffer();
-  // res.set("Content-Type", "image/png");
-  // res.send(imageData);
-
+  console.log("ciao");
   res.json({ message: 'Hello from server!' });
 });
+
+app.get('/api/grafico', async (req, res) => {
+  const canvas = new Canvas(400, 300);
+
+  const chart = new Chart(
+    canvas, // TypeScript needs "as any" here
+    {
+      type: 'line',
+      data: {
+        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        datasets: [{
+          label: '# of Votes',
+          data: [12, 19, 3, 5, 2, 3],
+          borderColor: 'red'
+        }]
+      }
+    }
+  );
+
+  const pngBuffer = await canvas.toBuffer('png', {matte: 'white'});
+  //const pngBuffer = await canvas.toBuffer('png', {matte: 'white'});
+  await fsp.writeFile('output.png', pngBuffer);
+
+  res.setHeader('Content-Type', 'image/png');
+  //chart.destroy();
+  res.send(pngBuffer);
+});
+
+//TODO togliere 0.0.0.0 per il docker altrimenti non si riesce a raggiungere
+
+// app.listen(port, '127.0.0.1', () => {
+//   console.log('Server in ascolto sulla porta 8080');
+// });
 
 app.listen(port, () => {
   console.log('Server in ascolto sulla porta 8080');
 });
+
+
+export default app;

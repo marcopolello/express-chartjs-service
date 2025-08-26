@@ -1,10 +1,6 @@
 docker build -t express-chartjs-service .
 
-docker run -p 8080:8080 express-chartjs-service
-
 docker run -p 8080:8080 --name express-chartjs-service express-chartjs-service
-
-docker rename my-exprTESTess-chartjs express-chartjs-service
 
 
 You can also use docker network connect command to connect a running container to a network.

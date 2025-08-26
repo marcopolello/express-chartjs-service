@@ -1,9 +1,11 @@
 {
   "name": "express-chartjs-service",
+  "type": "module",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -11,7 +13,8 @@
   "license": "ISC",
   "dependencies": {
     "chart.js": "^4.5.0",
-    "chartjs-node-canvas": "^5.0.0",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "fs": "^0.0.1-security",
+    "skia-canvas": "^3.0.4"
   }
 }
